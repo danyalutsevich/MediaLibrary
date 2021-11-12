@@ -22,7 +22,6 @@ public:
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		window = glfwCreateWindow(width, height, title, NULL, NULL);
 		glfwMakeContextCurrent(window);
-		gladLoadGL();
 	}
 
 	bool isOpen() {
@@ -40,6 +39,7 @@ public:
 
 	void clear(float r, float g, float b, float a) {
 		
+		gladLoadGL();
 		glClearColor(r, g, b, a);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(window);
