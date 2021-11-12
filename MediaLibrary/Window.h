@@ -1,0 +1,54 @@
+#pragma once
+
+#include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+class Window {
+
+
+private:
+
+	GLFWwindow* window;
+
+public:
+
+	Window(int width, int height, const char* title = "") {
+
+		glfwInit();
+
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		window = glfwCreateWindow(width, height, title, NULL, NULL);
+		glfwMakeContextCurrent(window);
+		gladLoadGL();
+	}
+
+	bool isOpen() {
+		
+
+		return !glfwWindowShouldClose(window);
+
+	}
+
+	GLFWwindow* getWindow() {
+		
+		return window;
+
+	}
+
+	void clear(float r, float g, float b, float a) {
+		
+		glClearColor(r, g, b, a);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glfwSwapBuffers(window);
+	}
+
+	~Window() {
+
+		glfwDestroyWindow(window);
+
+	}
+
+};
