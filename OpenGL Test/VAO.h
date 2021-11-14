@@ -21,6 +21,14 @@ public:
 		VBO.unbind();
 	}
 
+	void linkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset) {
+
+		VBO.bind();
+		glVertexAttribPointer(layout, numComponents, GL_FLOAT, GL_FALSE, stride, offset);
+		glEnableVertexAttribArray(layout);
+		VBO.unbind();
+	}
+
 	void bind() {
 
 		glBindVertexArray(ID);

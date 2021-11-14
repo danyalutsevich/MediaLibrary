@@ -6,16 +6,17 @@
 #include "VAO.h"
 #include "EBO.h"
 #include "VBO.h"
+#include "Window.h"
 
 
 GLfloat vertices[] = {
 
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, 
-	0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, 
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f,
-	-0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f,
-	0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, 
-	0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f 
+	-0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower left corner
+	 0.5f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f, // Lower right corner
+	 0.0f,  0.5f * float(sqrt(3)) * 2 / 3, 0.0f,     1.0f, 0.6f,  0.32f, // Upper corner
+	-0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner left
+	 0.25f, 0.5f * float(sqrt(3)) * 1 / 6, 0.0f,     0.9f, 0.45f, 0.17f, // Inner right
+	 0.0f, -0.5f * float(sqrt(3)) * 1 / 3, 0.0f,     0.8f, 0.3f,  0.02f  // Inner down
 };
 
 GLuint indices[] = {
@@ -34,19 +35,12 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(800, 800, "TESTING", NULL, NULL);
+	Window window(800,800,"TESTING",1);
 
 
-	if (window == NULL) {
 
-		std::cout << "Failed to create GLFW window\n";
 
-		glfwTerminate();
-		return -1;
-
-	}
-
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(window.getWindow());
 
 	gladLoadGL();
 
@@ -65,25 +59,32 @@ int main() {
 
 	EBO ebo(indices, sizeof(indices));
 
-	vao.linkVBO(vbo, 0);
+	//vao.linkVBO(vbo, 0);
+
+	vao.linkAttrib(vbo, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	vao.linkAttrib(vbo, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
 	vao.unbind();
 	vbo.unbind();
 	ebo.unbind();
 
+	GLuint uniID = glGetUniformLocation(shaderProgram.ID,"scale");
 
-	while (!glfwWindowShouldClose(window)) {
 
 
-		glClearColor(0.5, 0.5, 0.5, 1.0f);
+	while (!glfwWindowShouldClose(window.getWindow())) {
+
+
+		glClearColor(rand()%100/100.f, rand() % 100 / 100.f, rand() % 100 / 100.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shaderProgram.activate();
+		glUniform1f(uniID, 1.-rand() % 200 / 100.f);
 		vao.bind();
 
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(window.getWindow());
 
 
 		glfwPollEvents();
@@ -95,7 +96,7 @@ int main() {
 	ebo.deactivate();
 	shaderProgram.deactivate();
 
-	glfwDestroyWindow(window);
+	
 	glfwTerminate();
 
 
